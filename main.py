@@ -1,17 +1,17 @@
 #!python
-import requests
-from pyfzf.pyfzf import FzfPrompt
 import os
 import sys
+import requests
+from pyfzf.pyfzf import FzfPrompt
 
 # Config
-URLTS = 'http://127.0.0.0:8090' #TorrServer URL
-TSUser = '' #TorrServer username
-TSPass = '' #TorrServer password
-URLJAC = 'https://example.com' #Jackett URL
-APIKEY = '' #Api key for jackett
-PLAYER = '/bin/mpv' #Path to media-player
-fzf = FzfPrompt('/bin/fzf') #Path to FZF
+URLTS = 'http://127.0.0.0:8090'  # TorrServer URL
+TSUser = ''  # TorrServer username
+TSPass = ''  # TorrServer password
+URLJAC = 'https://example.com'  # Jackett URL
+APIKEY = ''  # Api key for jackett
+PLAYER = '/bin/mpv'  # Path to media-player
+fzf = FzfPrompt('/bin/fzf')  # Path to FZF
 
 
 class TorrServer:
@@ -25,18 +25,18 @@ class TorrServer:
         req = requests.post(f'{self.ip}/torrents', json={'action': 'list'}, auth=(TSUser, TSPass))
         return req.json()
 
-    def torrent_m3u_url(self, hash, from_last=True):
+    def torrent_m3u_url(self, torrent_hash, from_last=True):
         if from_last:
-            return f'{self.ip}/stream/fname?link={hash}&index=1&m3u&fromlast'
+            return f'{self.ip}/stream/fname?link={torrent_hash}&index=1&m3u&fromlast'
         else:
-            return f'{self.ip}/stream/fname?link={hash}&index=1&m3u'
+            return f'{self.ip}/stream/fname?link={torrent_hash}&index=1&m3u'
 
-    def torrent_add(self, hash):
+    def torrent_add(self, torrent_hash):
         requests.post(f'{self.ip}/torrents', json={'action': 'add',
-                                                    'link': hash,
-                                                    'poster': '',
-                                                    'save_to_db': True,
-                                                    'title': '',
+                                                   'link': torrent_hash,
+                                                   'poster': '',
+                                                   'save_to_db': True,
+                                                   'title': '',
                                                    }, auth=(TSUser, TSPass))
 
 
@@ -103,5 +103,3 @@ if __name__ == '__main__':
         print('unknown parameters')
     elif len(sys.argv) == 1:
         view_torrents(False)
-
-

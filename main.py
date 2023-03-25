@@ -54,41 +54,41 @@ class Jackett:
         return req.json()
 
 
-    def fzf_torrent(torrent_list):
-        titles = []
-        for i in torrent_list:
-            titles.append(i['title'])
-        res = fzf.prompt(titles)
-        for i in torrent_list:
-            if i['title'] == res[0]:
-                return i
+def fzf_torrent(torrent_list):
+    titles = []
+    for i in torrent_list:
+        titles.append(i['title'])
+    res = fzf.prompt(titles)
+    for i in torrent_list:
+        if i['title'] == res[0]:
+            return i
 
 
-    def fzf_jac_search(torrent_list):
-        titles = []
-        for i in torrent_list['Results']:
-            titles.append(i['Title'])
-        res = fzf.prompt(titles)
-        for i in torrent_list['Results']:
-            if i['Title'] == res[0]:
-                return i
+def fzf_jac_search(torrent_list):
+    titles = []
+    for i in torrent_list['Results']:
+        titles.append(i['Title'])
+    res = fzf.prompt(titles)
+    for i in torrent_list['Results']:
+        if i['Title'] == res[0]:
+            return i
 
 
-    def view_torrents(start):
-        hash_torrent = fzf_torrent(ts.torrents())['hash']
-        if start:
-            link_m3u = ts.torrent_m3u_url(hash_torrent, False)
-        else:
-            link_m3u = ts.torrent_m3u_url(hash_torrent)
-        os.system(f'{PLAYER} \'{link_m3u}\'')
-
-
-    def jackett_search(query):
-        jackett = Jackett(URLJAC, APIKEY)
-        hash_torrent = fzf_jac_search(jackett.search(query))['MagnetUri']
-        ts.torrent_add(hash_torrent)
+def view_torrents(start):
+    hash_torrent = fzf_torrent(ts.torrents())['hash']
+    if start:
+        link_m3u = ts.torrent_m3u_url(hash_torrent, False)
+    else:
         link_m3u = ts.torrent_m3u_url(hash_torrent)
-        os.system(f'{PLAYER} \'{link_m3u}\'')
+    os.system(f'{PLAYER} \'{link_m3u}\'')
+
+
+def jackett_search(query):
+    jackett = Jackett(URLJAC, APIKEY)
+    hash_torrent = fzf_jac_search(jackett.search(query))['MagnetUri']
+    ts.torrent_add(hash_torrent)
+    link_m3u = ts.torrent_m3u_url(hash_torrent)
+    os.system(f'{PLAYER} \'{link_m3u}\'')
 
 
 if __name__ == '__main__':
